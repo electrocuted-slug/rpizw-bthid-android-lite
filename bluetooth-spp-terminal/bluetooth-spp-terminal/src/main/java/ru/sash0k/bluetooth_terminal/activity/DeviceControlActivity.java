@@ -273,7 +273,6 @@ public final class DeviceControlActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Utils.log("HERE:: " + requestCode);
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect

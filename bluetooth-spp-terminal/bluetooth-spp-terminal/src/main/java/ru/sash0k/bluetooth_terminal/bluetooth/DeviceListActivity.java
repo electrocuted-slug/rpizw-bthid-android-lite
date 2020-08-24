@@ -186,7 +186,6 @@ public class DeviceListActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         m_text = input.getText().toString();
-                        Utils.log("HERE:: " + long_click_address + m_text);
                         Utils.setKey(mCtx, long_click_address, m_text);
                     }
                 });
