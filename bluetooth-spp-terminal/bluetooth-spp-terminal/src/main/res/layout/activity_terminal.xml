@@ -11,6 +11,12 @@
         android:orientation="horizontal"
         android:weightSum="5">
 
+        <CheckBox
+            android:id="@+id/command_hide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true" />
+
         <EditText
             android:id="@+id/command_edittext"
             android:layout_width="0dp"

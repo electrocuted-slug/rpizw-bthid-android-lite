@@ -18,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +57,7 @@ public final class DeviceControlActivity extends BaseActivity {
     private StringBuilder logHtml;
     private TextView logTextView;
     private EditText commandEditText;
+    private CheckBox hideCommands;
 
     // Настройки приложения
     private boolean hexMode, checkSum, needClean, showLog;
@@ -85,6 +89,14 @@ public final class DeviceControlActivity extends BaseActivity {
         this.logTextView = (TextView) findViewById(R.id.log_textview);
         this.logTextView.setMovementMethod(new ScrollingMovementMethod());
         this.logTextView.setText(Html.fromHtml(logHtml.toString()));
+
+        this.hideCommands = (CheckBox) findViewById(R.id.command_hide);
+        this.hideCommands.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked){
+                prepareInputMode();
+            }
+        });
 
         this.commandEditText = (EditText) findViewById(R.id.command_edittext);
         // soft-keyboard send button
@@ -232,15 +244,7 @@ public final class DeviceControlActivity extends BaseActivity {
         super.onStart();
 
         // hex mode
-        final String mode = Utils.getPrefence(this, getString(R.string.pref_commands_mode));
-        this.hexMode = "HEX".equals(mode);
-        if (hexMode) {
-            commandEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-            commandEditText.setFilters(new InputFilter[]{new Utils.InputFilterHex()});
-        } else {
-            commandEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-            commandEditText.setFilters(new InputFilter[]{});
-        }
+        prepareInputMode();
 
         // checksum
         final String checkSum = Utils.getPrefence(this, getString(R.string.pref_checksum_mode));
@@ -256,6 +260,23 @@ public final class DeviceControlActivity extends BaseActivity {
     }
     // ============================================================================
 
+
+    /**
+     * Configure Input Mode
+     */
+    private void prepareInputMode(){
+        final String mode = Utils.getPrefence(this, getString(R.string.pref_commands_mode));
+        this.hexMode = "HEX".equals(mode);
+        int inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+        if (hideCommands.isChecked()) inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD;
+        if (hexMode) {
+            commandEditText.setInputType(InputType.TYPE_CLASS_TEXT | inputType | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+            commandEditText.setFilters(new InputFilter[]{new Utils.InputFilterHex()});
+        } else {
+            commandEditText.setInputType(InputType.TYPE_CLASS_TEXT | inputType);
+            commandEditText.setFilters(new InputFilter[]{});
+        }
+    }
 
     /**
      * Получить из настроек признак окончания команды
